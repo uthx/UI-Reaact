@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Data from "./components/data";
 function App() {
+  const [products, setProducts] = useState([]);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/item/listall")
+      .then(({ data }) => {
+        setProducts(data.result);
+        setIsDeleted(false);
+        console.log(data.result);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [isDeleted, isAdded]);
+
+  const el = products.map((data) => (
+    <Data {...data} setIsDeleted={setIsDeleted} key={data.id} />
+  ));
+  console.log(el);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {el}
+      <button>add</button>
     </div>
   );
 }
